@@ -1,14 +1,15 @@
 
 import { useState } from "react";
-
+import TextExpand from "./TextExpander";
 export default function App() {
   return (
     <div>
-      <TipCalculator />
+      {/* <TipCalculator /> */}
+      <TextExpand />
     </div>
   );
 }
-
+/*
 function TipCalculator() {
   const [bill, setBill] = useState("");
   const [percentage1, setPercentage1] = useState(0);
@@ -84,3 +85,4 @@ function Output({ bill, tip }) {
 function Reset({ onReset }) {
   return <button onClick={onReset}>Reset</button>;
 }
+*/
