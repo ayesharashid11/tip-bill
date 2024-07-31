@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-// import '../../App.css';
+import { useDispatch } from 'react-redux';
+import { addList, setStatusFilter } from '../../todoSlice';
 
-export const InputList = ({ addList, setStatusFilter }) => {
+export const InputList = () => {
+  const dispatch = useDispatch();
   const [inputText, setInputText] = useState('');
   const [status, setStatus] = useState('');
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    addList(inputText);
+    dispatch(addList(inputText));
     setInputText('');
   };
 
   const handleSearch = () => {
-    setStatusFilter(status);
+    dispatch(setStatusFilter(status));
   };
 
   return (
@@ -24,25 +27,20 @@ export const InputList = ({ addList, setStatusFilter }) => {
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
         />
-        <button type="submit" className='text-xl font-medium buttoncolor  dark:bg-violet-500 p-3 m-2 rounded-lg'>
+        <button type="submit" className='text-xl font-medium buttoncolor dark:bg-violet-500 p-3 m-2 rounded-lg'>
           ADD
         </button>
       </form>
       <div>
-        {/* <input
-          type="text"
-          placeholder="Check Status"
+        <select
           value={status}
+          className='textcolor p-3 rounded-lg'
           onChange={(e) => setStatus(e.target.value)}
-          className="p-4 border-2 textcolor rounded-lg"
-        /> */}
-       
-        <select value={status} className='textcolor p-3 rounded-lg'
-          onChange={(e) => setStatus(e.target.value)}>
-        <option value='Incomplete'>Incomplete</option>
-        <option value='Complete'>Complete</option>
+        >
+          <option value='Incomplete'>Incomplete</option>
+          <option value='Complete'>Complete</option>
         </select>
-        <button className='buttoncolor  dark:bg-violet-500 text-xl font-medium p-3 m-2 rounded-lg' onClick={handleSearch}>
+        <button className='buttoncolor dark:bg-violet-500 text-xl font-medium p-3 m-2 rounded-lg' onClick={handleSearch}>
           Search
         </button>
       </div>

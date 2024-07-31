@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateStatus, deleteTask, editTask } from '../../todoSlice';
 
-export const Lists = ({ items, statusFilter, updateStatus, deleteTask }) => {
+export const Lists = ({ items, statusFilter }) => {
+  const dispatch = useDispatch();
+  const listTodo = useSelector((state) => state.todos.listTodo);
+
   const [status, setStatus] = useState('');
   const [deleteIndex, setDeleteIndex] = useState(null);
 
@@ -10,18 +15,18 @@ export const Lists = ({ items, statusFilter, updateStatus, deleteTask }) => {
   const [list, setList] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [listPerPage] = useState(3);
+
   const paginate = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
   useEffect(() => {
-    const _list = [...items]
+    const _list = [...items];
     const indexOfLastList = currentPage * listPerPage;
     const indexOfFirstList = indexOfLastList - listPerPage;
-
-    // console.log("items===", currentPage * listPerPage);
     const currentLists = _list.slice(indexOfFirstList, indexOfLastList);
-    setList([...currentLists])
-  }, [items, currentPage])
+    setList([...currentLists]);
+  }, [items, currentPage]);
 
   useEffect(() => {
     setStatus(statusFilter);
@@ -29,12 +34,12 @@ export const Lists = ({ items, statusFilter, updateStatus, deleteTask }) => {
 
   const handleChange = (index, e) => {
     const updatedStatus = e.target.value;
-    updateStatus(index, updatedStatus);
+    dispatch(updateStatus({ index, newStatus: updatedStatus }));
   };
 
   const handleDeleteTask = (index) => {
     setDeleteIndex(index);
-    deleteTask(index);
+    dispatch(deleteTask(index));
   };
 
   const handleEditTask = (index) => {
@@ -42,36 +47,30 @@ export const Lists = ({ items, statusFilter, updateStatus, deleteTask }) => {
     newEditIndex[index] = true;
     setEditIndex(newEditIndex);
     const newEditText = [...editText];
-    newEditText[index] = items[index].item;
+    newEditText[index] = listTodo[index].item;
     setEditText(newEditText);
-    // setEditIndex(index);
-    // setEditText(items[index].item);
   };
 
   const saveEditedTask = (index) => {
-    const updatedList = [...items];
-    updatedList[index].item = editText;
+    dispatch(editTask({ index, newText: editText[index] }));
     const newEditIndex = [...editIndex];
     newEditIndex[index] = false;
     setEditIndex(newEditIndex);
-    // setEditIndex(false);
-    // setEditText('');
   };
+
   const editList = (e, index) => {
-    // setEditText(e.target.value);
-    const newEditIndex = [...editIndex];
-    newEditIndex[index] = e.target.value;
-    setEditText(newEditIndex);
-  }
+    const newEditText = [...editText];
+    newEditText[index] = e.target.value;
+    setEditText(newEditText);
+  };
 
   const cancelEdit = (index) => {
     const newEditIndex = [...editIndex];
-    newEditIndex.splice(index, 1);
+    newEditIndex[index] = false;
     setEditIndex(newEditIndex);
-    // setEditText('');
   };
 
-  const filteredItems = items.filter((item) => {
+  const filteredItems = listTodo.filter((item) => {
     if (!item || !item.status) {
       return false;
     }
@@ -87,7 +86,7 @@ export const Lists = ({ items, statusFilter, updateStatus, deleteTask }) => {
     <div className='grid grid-cols-2'>
       <div>
         {list.map((item, index) => (
-          <div className='m-3  flex p-6 bg-slate-300 rounded-lg' key={index}>
+          <div className='m-3 flex p-6 bg-slate-300 rounded-lg' key={index}>
             {editIndex[index] ? (
               <>
                 <input
@@ -96,8 +95,8 @@ export const Lists = ({ items, statusFilter, updateStatus, deleteTask }) => {
                   value={editText[index]}
                   onChange={(e) => editList(e, index)}
                 />
-                <button className=' p-2 m-1' onClick={() => saveEditedTask(index)}>Save</button>
-                <button className=' p-2 m-1' onClick={() => cancelEdit(index)}>Cancel</button>
+                <button className='p-2 m-1' onClick={() => saveEditedTask(index)}>Save</button>
+                <button className='p-2 m-1' onClick={() => cancelEdit(index)}>Cancel</button>
               </>
             ) : (
               <>
@@ -110,12 +109,13 @@ export const Lists = ({ items, statusFilter, updateStatus, deleteTask }) => {
                 </div>
                 <button
                   className='text-2xl text-pink-900 m-1 cursor-pointer'
-                  onClick={() => handleDeleteTask(index)}>Delete
-                  </button>
-                <button className='text-2xl text-pink-900 m-1 cursor-pointer'
-                  onClick={() => handleEditTask(index)}>Edit
-                  </button>
-
+                  onClick={() => handleDeleteTask(index)}
+                >
+                  Delete
+                </button>
+                <button className='text-2xl text-pink-900 m-1 cursor-pointer' onClick={() => handleEditTask(index)}>
+                  Edit
+                </button>
               </>
             )}
           </div>
