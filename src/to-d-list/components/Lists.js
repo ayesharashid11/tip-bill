@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { updateStatus, deleteTask, editTask } from '../../todoSlice';
+import { updateStatus, deleteTask, editTask, setCurrentPage } from '../../todoSlice';
+import Paginate from './Paginate';
 
 export const Lists = ({ items, statusFilter }) => {
   const dispatch = useDispatch();
   const listTodo = useSelector((state) => state.todos.listTodo);
+  const currentPage = useSelector((state) => state.todos.currentPage);
+  const listPerPage = useSelector((state) => state.todos.listPerPage);
 
   const [status, setStatus] = useState('');
   const [deleteIndex, setDeleteIndex] = useState(null);
@@ -13,11 +16,9 @@ export const Lists = ({ items, statusFilter }) => {
   const [editText, setEditText] = useState([]);
 
   const [list, setList] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [listPerPage] = useState(3);
 
   const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    dispatch(setCurrentPage(pageNumber));
   };
 
   useEffect(() => {
@@ -26,7 +27,7 @@ export const Lists = ({ items, statusFilter }) => {
     const indexOfFirstList = indexOfLastList - listPerPage;
     const currentLists = _list.slice(indexOfFirstList, indexOfLastList);
     setList([...currentLists]);
-  }, [items, currentPage]);
+  }, [items, currentPage, listPerPage]);
 
   useEffect(() => {
     setStatus(statusFilter);

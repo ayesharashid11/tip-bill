@@ -3,6 +3,8 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   listTodo: [],
   statusFilter: '',
+  currentPage: 1,
+  listPerPage: 3,
 };
 
 const todoSlice = createSlice({
@@ -24,12 +26,18 @@ const todoSlice = createSlice({
       state.statusFilter = action.payload;
     },
     editTask: (state, action) => {
-        const { index, newText } = action.payload;
-        state.listTodo[index].item = newText;
-      }
+      const { index, newText } = action.payload;
+      state.listTodo[index].item = newText;
+    },
+    setCurrentPage: (state, action) => {
+      state.currentPage = action.payload;
+    },
+    setListPerPage: (state, action) => {
+      state.listPerPage = action.payload;
+    }
   },
 });
 
-export const { addList, updateStatus, deleteTask, setStatusFilter, editTask } = todoSlice.actions;
+export const { addList, updateStatus, deleteTask, setStatusFilter, editTask, setCurrentPage, setListPerPage } = todoSlice.actions;
 
 export default todoSlice.reducer;
