@@ -120,6 +120,11 @@ export const Lists = ({ items, statusFilter }) => {
             )}
           </div>
         ))}
+        <Paginate
+          listPerPage={listPerPage}
+          totalLists={items.length}
+          paginate={paginate}
+        />
       </div>
       <div>
         {statusFilter && (
